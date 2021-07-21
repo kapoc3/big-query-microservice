@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.6.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.BigQueryMicroservice", "Doppler.BigQueryMicroservice\Doppler.BigQueryMicroservice.csproj", "{60255953-ddda-491a-8731-c3098f66a688}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.BigQueryMicroservice.Test", "Doppler.BigQueryMicroservice.Test\Doppler.BigQueryMicroservice.Test.csproj", "{cca2d0b5-8639-43ec-bce7-884762c7fcf3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc Files", "Misc Files", "{372d7292-e688-4042-9e7e-b36853632241}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.prettierignore = .prettierignore
+		build-n-publish.sh = build-n-publish.sh
+		demo.http = demo.http
+		Dockerfile = Dockerfile
+		Jenkinsfile = Jenkinsfile
+		package.json = package.json
+		README.md = README.md
+		verify-w-docker.sh = verify-w-docker.sh
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{60255953-ddda-491a-8731-c3098f66a688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Debug|x64.Build.0 = Debug|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Debug|x86.Build.0 = Debug|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Release|x64.ActiveCfg = Release|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Release|x64.Build.0 = Release|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Release|x86.ActiveCfg = Release|Any CPU
+		{60255953-ddda-491a-8731-c3098f66a688}.Release|x86.Build.0 = Release|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Debug|x64.Build.0 = Debug|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Debug|x86.Build.0 = Debug|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Release|x64.ActiveCfg = Release|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Release|x64.Build.0 = Release|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Release|x86.ActiveCfg = Release|Any CPU
+		{cca2d0b5-8639-43ec-bce7-884762c7fcf3}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {e0c870fa-1f0b-4aab-b83c-af9439b1d396}
+	EndGlobalSection
+EndGlobal
