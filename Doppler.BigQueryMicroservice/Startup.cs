@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Doppler.BigQueryMicroservice.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,12 @@ namespace Doppler.BigQueryMicroservice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<DopplerDatabaseSettings>(Configuration.GetSection(nameof(DopplerDatabaseSettings)));
             services.AddDopplerSecurity();
             services.AddControllers();
             services.AddSingleton<Weather.WeatherForecastService>();
             services.AddSingleton<Weather.DataService>();
+            services.AddInfrastructure();
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer",
