@@ -5,7 +5,9 @@ using Doppler.BigQueryMicroservice.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Doppler.BigQueryMicroservice.Repository.Classes
@@ -13,37 +15,12 @@ namespace Doppler.BigQueryMicroservice.Repository.Classes
     /// <summary>
     /// UserAccessByUserrepository for access to sql database
     /// </summary>
-    public class UserAccessByUserRepository : BaseRepository, IUserAccessByUserRepository
+    public class UserAccessByUserRepository : BaseRepository<UserAccessByUser>, IUserAccessByUserRepository
     {
-        public UserAccessByUserRepository(IDatabaseConnectionFactory connectionFactory, ILogger<BaseRepository> bigQueryLogger) : base(connectionFactory, bigQueryLogger) { }
-
-        #region BaseRepository implementation
-        Task<int> IGenericRepository<UserAccessByUser>.AddAsync(UserAccessByUser entity)
+        public UserAccessByUserRepository(IDatabaseConnectionFactory connectionFactory, ILogger<UserAccessByUser> bigQueryLogger) : base(connectionFactory, bigQueryLogger)
         {
-            throw new NotImplementedException();
+            TableName = "[datastudio].[UserAccessByUser]";
         }
-
-        Task<int> IGenericRepository<UserAccessByUser>.DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<IReadOnlyList<UserAccessByUser>> IGenericRepository<UserAccessByUser>.GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<UserAccessByUser> IGenericRepository<UserAccessByUser>.GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<int> IGenericRepository<UserAccessByUser>.UpdateAsync(UserAccessByUser entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
 
         #region IUserAccessByUserRepository methods implementations
         public async Task<IReadOnlyList<UserAccessByUser>> GetAllByUserIdAsync(string accountName)
@@ -73,6 +50,71 @@ namespace Doppler.BigQueryMicroservice.Repository.Classes
                 }
             }
         }
+
+        public async Task<bool> MergeEmailsAsync(int userId, List<string> emails)
+        {
+            using (var connection = await base.CreateConnectionAsync())
+            {
+                try
+                {
+                    var dt = new DataTable("[dbo].[TypeEmail]");
+                    dt.Columns.Add("Email", typeof(string));
+
+                    foreach (var email in emails)
+                    {
+                        dt.Rows.Add(email);
+                    }
+
+                    dt.SetTypeName("[dbo].[TypeEmail]");
+
+                    string sql = @"MERGE [datastudio].[UserAccessByUser] t
+USING @Emails s
+ON
+    (
+        s.Email      = t.Email
+        AND t.IdUser = @IdUser
+    )
+WHEN NOT MATCHED BY TARGET THEN
+INSERT
+    (IdUser
+        , Email
+        , CreatedAt
+        , ValidFrom
+        , ValidTo
+        , UpdateAt
+    )
+    VALUES
+    (@IdUser
+        , s.Email
+        , GetDate()
+        , GetDate ()
+        , dateadd(year, 10, getdate())
+        , GetDate()
+    )
+WHEN NOT MATCHED BY SOURCE
+    AND
+    (
+        t.IdUser = @IdUser
+    )
+    THEN
+    DELETE
+    ;";
+
+                    connection.Execute(sql, new { Emails = dt, IdUser = userId });
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    base.BigQueryLogger.LogError(ex, $"Emails can not be merged for {nameof(userId)} {userId}");
+                    throw;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
+
         #endregion
     }
 }

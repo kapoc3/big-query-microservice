@@ -6,9 +6,14 @@ namespace Doppler.BigQueryMicroservice.Serialization
     /// <summary>
     /// Serialize structure for response in allow mails get
     /// </summary>
-    public class AllowEmails
+    public class AllowedEmails
     {
-        public AllowEmails(IReadOnlyList<UserAccessByUser> data)
+        public AllowedEmails()
+        {
+            Emails = new List<string>();
+        }
+
+        public AllowedEmails(IReadOnlyList<UserAccessByUser> data)
         {
             Emails = new List<string>();
             foreach (var allowEmail in data)
