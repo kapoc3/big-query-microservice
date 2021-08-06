@@ -11,7 +11,6 @@ namespace Doppler.BigQueryMicroservice.Infrastructure
         {
             services.AddTransient<IUserAccessByUserRepository, UserAccessByUserRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
 
         }
