@@ -1,14 +1,18 @@
 using Dapper;
 using Doppler.BigQueryMicroservice.Entitites;
+using Doppler.BigQueryMicroservice.Serialization;
 using Doppler.BigQueryMicroservice.Utils;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
 using Moq.Dapper;
+using Newtonsoft.Json;
 using System;
 using System.Data.Common;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -115,6 +119,92 @@ namespace Doppler.BigQueryMicroservice
             var request = new HttpRequestMessage(HttpMethod.Get, "big-query/test1@test.com/allow-emails")
             {
                 Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } }
+            };
+
+            #endregion
+
+            #region Act
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _output.WriteLine(responseContent);
+            #endregion
+
+            #region Assert
+            Assert.Equal(expectedContent, responseContent);
+            #endregion
+
+        }
+
+        [Fact]
+        public async Task PUT_save_allowed_emails_user_not_found()
+        {
+            #region Arrange
+            var parameter = new AllowedEmails();
+            parameter.Emails.Add("cristiancamilo11033@gmail.com");
+            var json = JsonConvert.SerializeObject(parameter);
+            var content = new System.Net.Http.StringContent(json, Encoding.UTF8, "application/json");
+
+
+            var mockConnection = new Mock<DbConnection>();
+            mockConnection.SetupDapperAsync(c => c.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>(), null, null, null)).ReturnsAsync(Enumerable.Empty<User>());
+
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.SetupConnectionFactory(mockConnection.Object);
+                });
+
+            }).CreateClient(new WebApplicationFactoryClientOptions());
+
+            var request = new HttpRequestMessage(HttpMethod.Put, "big-query/cgil@makinsense.com/allowed-emails")
+            {
+                Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } },
+                Content = content
+            };
+
+            #endregion
+
+            #region Act
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _output.WriteLine(responseContent);
+            #endregion
+
+            #region Assert
+            bool exist = responseContent.Contains("404");
+            Assert.True(exist);
+            #endregion
+
+        }
+
+        [Fact]
+        public async Task PUT_save_allowed_emails_user_found()
+        {
+            #region Arrange
+            var dbResponse = new[] { new User { Email = "cgil@makingsense.com", IdUser = 103021 } };
+            var parameter = new AllowedEmails();
+            parameter.Emails.Add("cristiancamilo110133@gmail.com");
+            var json = JsonConvert.SerializeObject(parameter);
+            var content = new System.Net.Http.StringContent(json, Encoding.UTF8, "application/json");
+            var expectedContent = "true";
+
+            var mockConnection = new Mock<DbConnection>();
+            mockConnection.SetupDapperAsync(c => c.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>(), null, null, null)).ReturnsAsync(dbResponse);
+
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.SetupConnectionFactory(mockConnection.Object);
+                });
+
+            }).CreateClient(new WebApplicationFactoryClientOptions());
+
+            var request = new HttpRequestMessage(HttpMethod.Put, "big-query/cgil@makinsense.com/allowed-emails")
+            {
+                Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } },
+                Content = content
             };
 
             #endregion

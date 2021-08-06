@@ -7,12 +7,9 @@ namespace Doppler.BigQueryMicroservice.Repository.Interfaces
     /// Contract specification for repository pattern
     /// </summary>
     /// <typeparam name="T">is a class with repository implementation</typeparam>
-    public interface IGenericRepository<T> where T : class
+    public interface IBaseRepository<T> where T : class
     {
+        //TODO add here the common methods for base repository
         Task<T> GetByIdAsync(int id);
-        Task<IReadOnlyList<T>> GetAllAsync();
-        Task<int> AddAsync(T entity);
-        Task<int> UpdateAsync(T entity);
-        Task<int> DeleteAsync(int id);
     }
 }

@@ -7,8 +7,9 @@ namespace Doppler.BigQueryMicroservice.Repository.Interfaces
     /// <summary>
     /// Extension of base contract for IUserAccessByUserRepository.
     /// </summary>
-    public interface IUserAccessByUserRepository : IGenericRepository<UserAccessByUser>
+    public interface IUserAccessByUserRepository : IBaseRepository<UserAccessByUser>
     {
         Task<IReadOnlyList<UserAccessByUser>> GetAllByUserIdAsync(string accountName);
+        Task<bool> MergeEmailsAsync(int userId, List<string> emails);
     }
 }

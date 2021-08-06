@@ -8,5 +8,6 @@ namespace Doppler.BigQueryMicroservice.Repository
     public interface IUnitOfWork
     {
         IUserAccessByUserRepository UserAccessByUser { get; }
+        IUserRepository User { get; }
     }
 }

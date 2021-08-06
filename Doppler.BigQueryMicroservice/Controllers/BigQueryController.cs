@@ -13,19 +13,31 @@ namespace Doppler.BigQueryMicroservice.Controllers
     [ApiController]
     public class BigQueryController : ControllerBase
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         public BigQueryController(IUnitOfWork unitOfWork)
         {
-            this.unitOfWork = unitOfWork;
+            this._unitOfWork = unitOfWork;
         }
 
         [HttpGet("/big-query/{accountName}/allow-emails")]
         public async Task<ActionResult> GetAllowEmails(string accountName)
         {
-            var data = await unitOfWork.UserAccessByUser.GetAllByUserIdAsync(accountName);
-            var result = new AllowEmails(data);
+            var data = await _unitOfWork.UserAccessByUser.GetAllByUserIdAsync(accountName);
+            var result = new AllowedEmails(data);
             return Ok(result);
+        }
 
+        [HttpPut("/big-query/{accountName}/allowed-emails")]
+        public async Task<ActionResult> SaveAllowedEmails(string accountName, AllowedEmails model)
+        {
+            var user = await _unitOfWork.User.GetUserByEmail(accountName);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var result = await _unitOfWork.UserAccessByUser.MergeEmailsAsync(user.IdUser, model.Emails);
+            return Ok(result);
         }
     }
+
 }

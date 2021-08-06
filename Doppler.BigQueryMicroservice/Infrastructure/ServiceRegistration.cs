@@ -10,6 +10,7 @@ namespace Doppler.BigQueryMicroservice.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<IUserAccessByUserRepository, UserAccessByUserRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
 

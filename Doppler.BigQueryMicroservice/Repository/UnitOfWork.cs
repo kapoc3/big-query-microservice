@@ -7,11 +7,14 @@ namespace Doppler.BigQueryMicroservice.Repository
     /// </summary>
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserAccessByUserRepository productRepository)
+        public UnitOfWork(IUserAccessByUserRepository productRepository, IUserRepository userRepository)
         {
             UserAccessByUser = productRepository;
+            User = userRepository;
         }
 
         public IUserAccessByUserRepository UserAccessByUser { get; }
+
+        public IUserRepository User { get; }
     }
 }
