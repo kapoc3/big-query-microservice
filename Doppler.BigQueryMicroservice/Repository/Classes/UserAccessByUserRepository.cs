@@ -23,20 +23,19 @@ namespace Doppler.BigQueryMicroservice.Repository.Classes
         }
 
         #region IUserAccessByUserRepository methods implementations
-        public async Task<IReadOnlyList<UserAccessByUser>> GetAllByUserIdAsync(string accountName)
+        public async Task<IReadOnlyList<UserAccessByUser>> GetAllByUserIdAsync(int id)
         {
             var builder = new SqlBuilder();
-            builder.Select("uabu.*").
-                InnerJoin("dbo.\"user\" u on u.IdUser = uabu.IdUser").
-                Where($"u.email = '{accountName}'");
+            builder.Select("*").
+                Where($"IdUser = @Id");
 
-            var builderTemplate = builder.AddTemplate("Select /**select**/ from datastudio.UserAccessByUser uabu /**innerjoin**/ /**where**/");
+            var builderTemplate = builder.AddTemplate("Select /**select**/ from datastudio.UserAccessByUser /**where**/");
 
             using (var connection = await base.CreateConnectionAsync())
             {
                 try
                 {
-                    var result = await connection.QueryAsync<UserAccessByUser>(builderTemplate.RawSql);
+                    var result = await connection.QueryAsync<UserAccessByUser>(builderTemplate.RawSql, new { Id = id });
                     return result.ToList();
                 }
                 catch (Exception ex)

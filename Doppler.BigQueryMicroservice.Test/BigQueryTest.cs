@@ -52,18 +52,9 @@ namespace Doppler.BigQueryMicroservice
                 UpdateAt = now,
                 ValidFrom = now,
                 ValidTo = now
-            },
-            new UserAccessByUser {
-                IdUser = 987654,
-                Email = "KapocEmail2@gmail.com",
-                CreateAt = now,
-                UpdateAt = now,
-                ValidFrom = now,
-                ValidTo = now
             }
             };
-
-            var expectedContent = "{\"emails\":[\"KapocEmail@gmail.com\",\"KapocEmail2@gmail.com\"]}";
+            var expectedContent = "{\"emails\":[\"KapocEmail@gmail.com\"]}";
             var mockConnection = new Mock<DbConnection>();
             mockConnection.SetupDapperAsync(c => c.QueryAsync<UserAccessByUser>(It.IsAny<string>(), It.IsAny<object>(), null, null, null)).ReturnsAsync(dbResponse);
 
@@ -76,7 +67,7 @@ namespace Doppler.BigQueryMicroservice
 
             }).CreateClient(new WebApplicationFactoryClientOptions());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "big-query/test1@test.com/allow-emails")
+            var request = new HttpRequestMessage(HttpMethod.Get, "big-query/cgil@makingsense.com/allowed-emails")
             {
                 Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } }
             };
@@ -103,7 +94,6 @@ namespace Doppler.BigQueryMicroservice
         public async Task GET_allow_emails_with_out_data_in_reponse()
         {
             #region Arrange
-            var expectedContent = "{\"emails\":[]}";
             var mockConnection = new Mock<DbConnection>();
             mockConnection.SetupDapperAsync(c => c.QueryAsync<UserAccessByUser>(It.IsAny<string>(), It.IsAny<object>(), null, null, null)).ReturnsAsync(Enumerable.Empty<UserAccessByUser>());
 
@@ -116,7 +106,7 @@ namespace Doppler.BigQueryMicroservice
 
             }).CreateClient(new WebApplicationFactoryClientOptions());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "big-query/test1@test.com/allow-emails")
+            var request = new HttpRequestMessage(HttpMethod.Get, "big-query/test1@test.com/allowed-emails")
             {
                 Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } }
             };
@@ -130,7 +120,8 @@ namespace Doppler.BigQueryMicroservice
             #endregion
 
             #region Assert
-            Assert.Equal(expectedContent, responseContent);
+            bool exist = responseContent.Contains("404");
+            Assert.True(exist);
             #endregion
 
         }
