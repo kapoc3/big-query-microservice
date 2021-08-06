@@ -9,7 +9,7 @@ namespace Doppler.BigQueryMicroservice.Repository.Interfaces
     /// </summary>
     public interface IUserAccessByUserRepository : IBaseRepository<UserAccessByUser>
     {
-        Task<IReadOnlyList<UserAccessByUser>> GetAllByUserIdAsync(string accountName);
+        Task<IReadOnlyList<UserAccessByUser>> GetAllByUserIdAsync(int id);
         Task<bool> MergeEmailsAsync(int userId, List<string> emails);
     }
 }

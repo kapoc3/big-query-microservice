@@ -19,10 +19,16 @@ namespace Doppler.BigQueryMicroservice.Controllers
             this._unitOfWork = unitOfWork;
         }
 
-        [HttpGet("/big-query/{accountName}/allow-emails")]
-        public async Task<ActionResult> GetAllowEmails(string accountName)
+        [HttpGet("/big-query/{accountName}/allowed-emails")]
+        public async Task<ActionResult> GetAllowedEmails(string accountName)
         {
-            var data = await _unitOfWork.UserAccessByUser.GetAllByUserIdAsync(accountName);
+            var user = await _unitOfWork.User.GetUserByEmail(accountName);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var data = await _unitOfWork.UserAccessByUser.GetAllByUserIdAsync(user.IdUser);
             var result = new AllowedEmails(data);
             return Ok(result);
         }
