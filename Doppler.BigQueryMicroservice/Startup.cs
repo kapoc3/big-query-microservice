@@ -29,6 +29,7 @@ namespace Doppler.BigQueryMicroservice
             services.Configure<DopplerDatabaseSettings>(Configuration.GetSection(nameof(DopplerDatabaseSettings)));
             services.AddDopplerSecurity();
             services.AddControllers();
+            services.AddCors();
             services.AddInfrastructure();
             services.AddSwaggerGen(c =>
             {
@@ -72,11 +73,13 @@ namespace Doppler.BigQueryMicroservice
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "Doppler.BigQueryMicroservice v1"));
-
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            app.UseCors(policy => policy
+                .SetIsOriginAllowed(isOriginAllowed: _ => true)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials());
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
