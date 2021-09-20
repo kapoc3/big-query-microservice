@@ -80,7 +80,7 @@ INSERT
         , CreatedAt
         , ValidFrom
         , ValidTo
-        , UpdateAt
+        , UpdatedAt
     )
     VALUES
     (@IdUser
