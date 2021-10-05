@@ -2,7 +2,7 @@ using Doppler.BigQueryMicroservice.Entitites;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Doppler.BigQueryMicroservice.Repository.Interfaces
+namespace Doppler.BigQueryMicroservice.Repository
 {
     /// <summary>
     /// Extension of base contract for IUserAccessByUserRepository.

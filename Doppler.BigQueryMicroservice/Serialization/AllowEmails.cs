@@ -21,8 +21,6 @@ namespace Doppler.BigQueryMicroservice.Serialization
                 Emails.Add(allowEmail.Email);
             }
         }
-
         public List<string> Emails { get; set; }
-
     }
 }

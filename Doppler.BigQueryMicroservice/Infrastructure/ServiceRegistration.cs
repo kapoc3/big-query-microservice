@@ -1,6 +1,5 @@
 using Doppler.BigQueryMicroservice.Repository;
-using Doppler.BigQueryMicroservice.Repository.Classes;
-using Doppler.BigQueryMicroservice.Repository.Interfaces;
+using Doppler.BigQueryMicroservice.Repository.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Doppler.BigQueryMicroservice.Infrastructure
@@ -12,7 +11,6 @@ namespace Doppler.BigQueryMicroservice.Infrastructure
             services.AddTransient<IUserAccessByUserRepository, UserAccessByUserRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
-
         }
     }
 }

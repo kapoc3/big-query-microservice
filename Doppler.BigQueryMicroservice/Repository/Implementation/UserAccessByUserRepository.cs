@@ -1,16 +1,14 @@
 using Dapper;
 using Doppler.BigQueryMicroservice.Entitites;
 using Doppler.BigQueryMicroservice.Infrastructure;
-using Doppler.BigQueryMicroservice.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Doppler.BigQueryMicroservice.Repository.Classes
+namespace Doppler.BigQueryMicroservice.Repository.Implementation
 {
     /// <summary>
     /// UserAccessByUserrepository for access to sql database

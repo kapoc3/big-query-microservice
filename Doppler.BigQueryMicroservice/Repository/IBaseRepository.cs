@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Doppler.BigQueryMicroservice.Repository.Interfaces
+namespace Doppler.BigQueryMicroservice.Repository
 {
     /// <summary>
     /// Contract specification for repository pattern
