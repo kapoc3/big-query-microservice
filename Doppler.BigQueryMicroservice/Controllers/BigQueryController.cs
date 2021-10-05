@@ -1,5 +1,4 @@
 using Doppler.BigQueryMicroservice.Repository;
-using Doppler.BigQueryMicroservice.Repository.Interfaces;
 using Doppler.BigQueryMicroservice.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,5 +49,4 @@ namespace Doppler.BigQueryMicroservice.Controllers
             return Ok(result);
         }
     }
-
 }

@@ -1,12 +1,11 @@
 using Dapper;
 using Doppler.BigQueryMicroservice.Entitites;
 using Doppler.BigQueryMicroservice.Infrastructure;
-using Doppler.BigQueryMicroservice.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace Doppler.BigQueryMicroservice.Repository.Classes
+namespace Doppler.BigQueryMicroservice.Repository.Implementation
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
