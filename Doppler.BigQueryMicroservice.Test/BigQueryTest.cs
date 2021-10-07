@@ -1,17 +1,23 @@
 using Dapper;
 using Doppler.BigQueryMicroservice.Entitites;
+using Doppler.BigQueryMicroservice.Repository;
 using Doppler.BigQueryMicroservice.Serialization;
+using Doppler.BigQueryMicroservice.Services;
 using Doppler.BigQueryMicroservice.Utils;
-using Microsoft.AspNetCore.Mvc;
+using Flurl.Http.Testing;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Dapper;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -173,7 +179,7 @@ namespace Doppler.BigQueryMicroservice
         public async Task PUT_save_allowed_emails_user_found()
         {
             #region Arrange
-            var dbResponse = new[] { new User { Email = "cgil@makingsense.com", IdUser = 103021 } };
+            var dbResponse = new[] { new User { Email = "cgil@makingsense.com", IdUser = 103021, Languaje = "en" } };
             var parameter = new AllowedEmails();
             parameter.Emails.Add("cristiancamilo110133@gmail.com");
             var json = JsonConvert.SerializeObject(parameter);
@@ -209,8 +215,94 @@ namespace Doppler.BigQueryMicroservice
             #region Assert
             Assert.Equal(expectedContent, responseContent);
             #endregion
-
         }
 
+        [Fact]
+        public async Task SaveAllowedEmails_should_return_200_when_email_notification_fails()
+        {
+            // Arrange
+            using var httpTest = new HttpTest();
+            httpTest.RespondWith("", 500);
+            var userId = 1;
+            var userEmail = "dummy@email.com";
+            var emails = new List<string> { "nuevo@gmail.com", "nuevo2@gmail.com" };
+            var user = new User { Email = userEmail, IdUser = userId, Languaje = "en" };
+            var mergeResult = new MergeEmailResult(emails);
+            var requestBody = new { Emails = emails };
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.GetUserByEmail(userEmail)).ReturnsAsync(user);
+
+            var userAccessByUserRepositoryMock = new Mock<IUserAccessByUserRepository>();
+            userAccessByUserRepositoryMock.Setup(x => x.MergeEmailsAsync(userId, emails)).ReturnsAsync(mergeResult);
+
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton(userRepositoryMock.Object);
+                    services.AddSingleton(userAccessByUserRepositoryMock.Object);
+                });
+
+            }).CreateClient(new WebApplicationFactoryClientOptions());
+
+            var request = new HttpRequestMessage(HttpMethod.Put, $"big-query/{userEmail}/allowed-emails")
+            {
+                Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } },
+                Content = JsonContent.Create(requestBody)
+            };
+
+            // Act
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _output.WriteLine(responseContent);
+
+            //Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task SaveAllowedEmails_should_not_call_email_when_not_has_new_permissions()
+        {
+            // Arrange
+            using var httpTest = new HttpTest();
+            var userId = 1;
+            var userEmail = "dummy@email.com";
+            var emails = new List<string> { "dummy@email.com" };
+            var user = new User { Email = userEmail, IdUser = userId, Languaje = "en" };
+            var mergeResult = new MergeEmailResult(emails);
+            var requestBody = new { Emails = emails };
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.GetUserByEmail(userEmail)).ReturnsAsync(user);
+
+            var userAccessByUserRepositoryMock = new Mock<IUserAccessByUserRepository>();
+            userAccessByUserRepositoryMock.Setup(x => x.MergeEmailsAsync(userId, emails)).ReturnsAsync(mergeResult);
+
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton(userRepositoryMock.Object);
+                    services.AddSingleton(userAccessByUserRepositoryMock.Object);
+                });
+
+            }).CreateClient(new WebApplicationFactoryClientOptions());
+
+            var request = new HttpRequestMessage(HttpMethod.Put, $"big-query/{userEmail}/allowed-emails")
+            {
+                Headers = { { "Authorization", $"Bearer {TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518}" } },
+                Content = JsonContent.Create(requestBody)
+            };
+
+            // Act
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var log = httpTest.CallLog;
+
+            //Assert
+            httpTest.ShouldNotHaveMadeACall();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
     }
 }
