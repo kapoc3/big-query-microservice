@@ -16,8 +16,10 @@ namespace Doppler.BigQueryMicroservice.Repository.Implementation
         public async Task<User> GetUserByEmail(string accountName)
         {
             var builder = new SqlBuilder();
-            builder.Select("IdUser").Select("Email").Where($"Email = @AccountName");
-            var builderTemplate = builder.AddTemplate($"Select /**select**/ from {TableName} /**where**/");
+            builder.Select("u.IdUser").Select("u.Email").Select("l.Name as Language");
+            builder.InnerJoin("[dbo].[Language] l on l.IdLanguage = u.IdLanguage");
+            builder.Where($"Email = @AccountName");
+            var builderTemplate = builder.AddTemplate($"Select /**select**/ from {TableName} u /**innerjoin**/ /**where**/");
             using (var connection = await CreateConnectionAsync())
             {
                 try

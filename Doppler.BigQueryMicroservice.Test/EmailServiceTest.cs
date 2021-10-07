@@ -18,7 +18,7 @@ namespace Doppler.BigQueryMicroservice
     /// <summary>
     /// Unit test for email service
     /// </summary>
-    public class EmailServiceTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class EmailServiceTest
     {
         private const string SendTemplateUrl = "https://api.dopplerrelay.com/accounts/{accountId}/templates/{templateId}/message";
 
@@ -47,7 +47,7 @@ namespace Doppler.BigQueryMicroservice
             };
 
             IFlurlClientFactory factory = new PerBaseUrlFlurlClientFactory();
-            var sut = new RelayEmailSender(Options.Create(configuration), Mock.Of<ILogger<RelayEmailSender>>() , factory);
+            var sut = new RelayEmailSender(Options.Create(configuration), Mock.Of<ILogger<RelayEmailSender>>(), factory);
 
             using (var httpTest = new HttpTest())
             {

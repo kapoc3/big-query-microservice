@@ -31,7 +31,13 @@ namespace Doppler.BigQueryMicroservice.Controllers
         /// <param name="userAccessByUserRepository">repository with schema datastudio access.</param>
         /// <param name="userRepository">repository for users from doppler database.</param>
         /// <param name="emailSender">service for send mails.</param>
-        public BigQueryController(IUserAccessByUserRepository userAccessByUserRepository, IUserRepository userRepository, IEmailSender emailSender, ILogger<BigQueryController> logger, IOptions<EmailNotificationsConfiguration> emailSettings)
+        public BigQueryController(
+            IUserAccessByUserRepository userAccessByUserRepository,
+            IUserRepository userRepository,
+            IEmailSender emailSender,
+            ILogger<BigQueryController>
+            logger, IOptions<EmailNotificationsConfiguration> emailSettings
+            )
         {
             this._userAccessByUserRepository = userAccessByUserRepository;
             this._userRepository = userRepository;
@@ -64,7 +70,7 @@ namespace Doppler.BigQueryMicroservice.Controllers
             }
 
             var result = await _userAccessByUserRepository.MergeEmailsAsync(user.IdUser, model.Emails);
-            var template = _emailSettings.Value.BigQueryInvitationTemplateId["en"];
+            var template = _emailSettings.Value.BigQueryInvitationTemplateId[user.Language ?? "en"];
 
             if (result.InsertedEmails.Count > 0)
             {
