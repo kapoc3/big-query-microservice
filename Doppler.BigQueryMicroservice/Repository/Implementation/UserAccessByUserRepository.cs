@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Doppler.BigQueryMicroservice.Repository.Implementation
@@ -48,7 +49,7 @@ namespace Doppler.BigQueryMicroservice.Repository.Implementation
             }
         }
 
-        public async Task<bool> MergeEmailsAsync(int userId, List<string> emails)
+        public async Task<MergeEmailResult> MergeEmailsAsync(int userId, List<string> emails)
         {
             using (var connection = await base.CreateConnectionAsync())
             {
@@ -95,14 +96,17 @@ WHEN NOT MATCHED BY SOURCE
     )
     THEN
     DELETE
-    ;";
-
-                    connection.Execute(sql, new { Emails = dt, IdUser = userId });
-                    return true;
+    OUTPUT
+        $action as Action,
+        inserted.Email,
+        deleted.Email;";
+                    var data = await connection.QueryAsync<MergeResponse>(sql, new { Emails = dt, IdUser = userId });
+                    var result = new MergeEmailResult(data.Where(a => a.Action == "INSERT").Select(e => e.Email).ToList());
+                    return result;
                 }
                 catch (Exception ex)
                 {
-                    base.BigQueryLogger.LogError(ex, $"Emails can not be merged for {nameof(userId)} {userId}");
+                    base.BigQueryLogger.LogError(ex, "Error merging emails for user: {userId}", userId);
                     throw;
                 }
                 finally

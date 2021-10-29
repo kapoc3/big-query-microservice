@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Doppler.BigQueryMicroservice.Entitites.EmailSender;
 using Doppler.BigQueryMicroservice.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace Doppler.BigQueryMicroservice
 {
@@ -27,6 +23,8 @@ namespace Doppler.BigQueryMicroservice
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<DopplerDatabaseSettings>(Configuration.GetSection(nameof(DopplerDatabaseSettings)));
+            services.Configure<RelayEmailSenderConfiguration>(Configuration.GetSection(nameof(RelayEmailSenderConfiguration)));
+            services.Configure<EmailNotificationsConfiguration>(Configuration.GetSection(nameof(EmailNotificationsConfiguration)));
             services.AddDopplerSecurity();
             services.AddControllers();
             services.AddCors();

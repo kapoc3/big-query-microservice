@@ -1,7 +1,13 @@
+using Doppler.BigQueryMicroservice.Entitites.EmailSender;
 using Doppler.BigQueryMicroservice.Repository;
 using Doppler.BigQueryMicroservice.Serialization;
+using Doppler.BigQueryMicroservice.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Doppler.BigQueryMicroservice.Controllers
@@ -15,12 +21,29 @@ namespace Doppler.BigQueryMicroservice.Controllers
     {
         private readonly IUserAccessByUserRepository _userAccessByUserRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IEmailSender _emailSender;
+        private readonly ILogger<BigQueryController> _logger;
+        private readonly IOptions<EmailNotificationsConfiguration> _emailSettings;
 
-
-        public BigQueryController(IUserAccessByUserRepository userAccessByUserRepository, IUserRepository userRepository)
+        /// <summary>
+        /// Constructor for dependency injection
+        /// </summary>
+        /// <param name="userAccessByUserRepository">repository with schema datastudio access.</param>
+        /// <param name="userRepository">repository for users from doppler database.</param>
+        /// <param name="emailSender">service for send mails.</param>
+        public BigQueryController(
+            IUserAccessByUserRepository userAccessByUserRepository,
+            IUserRepository userRepository,
+            IEmailSender emailSender,
+            ILogger<BigQueryController>
+            logger, IOptions<EmailNotificationsConfiguration> emailSettings
+            )
         {
             this._userAccessByUserRepository = userAccessByUserRepository;
             this._userRepository = userRepository;
+            this._emailSender = emailSender;
+            this._logger = logger;
+            this._emailSettings = emailSettings;
         }
 
         [HttpGet("/big-query/{accountName}/allowed-emails")]
@@ -45,8 +68,16 @@ namespace Doppler.BigQueryMicroservice.Controllers
             {
                 return NotFound();
             }
+
             var result = await _userAccessByUserRepository.MergeEmailsAsync(user.IdUser, model.Emails);
-            return Ok(result);
+            var template = _emailSettings.Value.BigQueryInvitationTemplateId[user.Language ?? "en"];
+
+            if (result.InsertedEmails.Count > 0)
+            {
+                await _emailSender.SafeSendWithTemplateAsync(template, result.InsertedEmails, model.Emails);
+            }
+
+            return Ok(true);
         }
     }
 }
