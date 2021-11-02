@@ -84,10 +84,10 @@ INSERT
     VALUES
     (@IdUser
         , s.Email
-        , GetDate()
-        , GetDate ()
-        , dateadd(year, 10, getdate())
-        , GetDate()
+        , GETUTCDATE()
+        , GETUTCDATE()
+        , dateadd(year, 10, GETUTCDATE())
+        , GETUTCDATE()
     )
 WHEN NOT MATCHED BY SOURCE
     AND
