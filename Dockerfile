@@ -3,7 +3,6 @@ WORKDIR /src
 COPY package.json yarn.lock ./
 RUN yarn
 COPY . .
-RUN yarn verify-format
 
 FROM koalaman/shellcheck-alpine as verify-sh
 WORKDIR /src
@@ -22,7 +21,6 @@ RUN dotnet restore
 
 FROM restore AS build
 COPY . .
-RUN dotnet dotnet-format --check
 RUN dotnet build -c Release
 
 FROM build AS test

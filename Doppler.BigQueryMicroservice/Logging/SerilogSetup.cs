@@ -23,11 +23,12 @@ namespace Doppler.BigQueryMicroservice.Logging
                 .Enrich.WithProperty("OSVersion", Environment.OSVersion)
                 .Enrich.FromLogContext();
 
-            if (!hostEnvironment.IsDevelopment())
+            loggerConfiguration.WriteTo.Loggly();
+            /*if (!hostEnvironment.IsDevelopment())
             {
                 loggerConfiguration
                     .WriteTo.Loggly();
-            }
+            }*/
 
             loggerConfiguration.ReadFrom.Configuration(configuration);
 

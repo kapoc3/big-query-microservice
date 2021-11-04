@@ -1,16 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage('Verify git commit conventions') {
-            steps {
-                sh 'sh ./gitlint.sh'
-            }
-        }
-        stage('Verify Format') {
-            steps {
-                sh 'docker build --target verify-format .'
-            }
-        }
         stage('Verify .sh files') {
             steps {
                 sh 'docker build --target verify-sh .'

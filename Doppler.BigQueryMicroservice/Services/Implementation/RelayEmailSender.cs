@@ -58,6 +58,8 @@ namespace Doppler.BigQueryMicroservice.Services.Implementation
                 select new { email = emailAddress, type = "to" }).Union(
                 from emailAddress in cc.EmptyIfNull() select new { email = emailAddress, type = "cc" }).Union(
                 from emailAddress in bcc.EmptyIfNull() select new { email = emailAddress, type = "bcc" }).ToArray();
+            _logger.LogInformation("recipients {recipients}:", recipients);
+            _logger.LogInformation("templateModel {templateModel}:", templateModel);
 
             await _flurlClient.Request(new UriTemplate(_config.SendTemplateUrlTemplate)
                     .AddParameter("accountId", _config.AccountId)
