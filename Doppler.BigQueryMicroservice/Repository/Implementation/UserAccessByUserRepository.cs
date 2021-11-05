@@ -26,7 +26,7 @@ namespace Doppler.BigQueryMicroservice.Repository.Implementation
         {
             var builder = new SqlBuilder();
             builder.Select("*").
-                Where($"IdUser = @Id");
+                Where($"IdUser = @Id and validTo > GETUTCDATE()");
 
             var builderTemplate = builder.AddTemplate("Select /**select**/ from datastudio.UserAccessByUser /**where**/");
 
