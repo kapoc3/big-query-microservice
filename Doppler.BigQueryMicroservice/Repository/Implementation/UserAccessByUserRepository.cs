@@ -64,44 +64,10 @@ namespace Doppler.BigQueryMicroservice.Repository.Implementation
                     }
 
                     dt.SetTypeName("[dbo].[TypeEmail]");
-
-                    string sql = @"MERGE [datastudio].[UserAccessByUser] t
-USING @Emails s
-ON
-    (
-        s.Email      = t.Email
-        AND t.IdUser = @IdUser
-    )
-WHEN NOT MATCHED BY TARGET THEN
-INSERT
-    (IdUser
-        , Email
-        , CreatedAt
-        , ValidFrom
-        , ValidTo
-        , UpdatedAt
-    )
-    VALUES
-    (@IdUser
-        , s.Email
-        , GETUTCDATE()
-        , GETUTCDATE()
-        , dateadd(year, 10, GETUTCDATE())
-        , GETUTCDATE()
-    )
-WHEN NOT MATCHED BY SOURCE
-    AND
-    (
-        t.IdUser = @IdUser
-    )
-    THEN
-    DELETE
-    OUTPUT
-        $action as Action,
-        inserted.Email,
-        deleted.Email;";
-                    var data = await connection.QueryAsync<MergeResponse>(sql, new { Emails = dt, IdUser = userId });
-                    var result = new MergeEmailResult(data.Where(a => a.Action == "INSERT").Select(e => e.Email).ToList());
+                    var actions = new[] { "C", "U" };
+                    string sql = "exec [dbo].[SaveEmailsByAccounName] @Emails, @UserId";
+                    var data = await connection.QueryAsync<MergeResponse>(sql, new { Emails = dt, UserId = userId });
+                    var result = new MergeEmailResult(data.Where(a => actions.Contains(a.Action)).Select(e => e.Email).ToList());
                     return result;
                 }
                 catch (Exception ex)
