@@ -34,6 +34,7 @@ namespace Doppler.BigQueryMicroservice
             var templateId = fixture.Create<string>();
             var demoData = fixture.Create<string>();
             var toEmail = "email@gmail.com";
+            var replyToAddress = "email@gmail.com";
             var bccEmail = "copy@copy.com";
             var expectedUrl = $"https://api.dopplerrelay.com/accounts/{relayAccountId}/templates/{templateId}/message";
 
@@ -43,7 +44,8 @@ namespace Doppler.BigQueryMicroservice
                 ApiKey = apiKey,
                 AccountId = relayAccountId,
                 AccountName = relayAccountName,
-                Username = relayUserEmail
+                Username = relayUserEmail,
+                ReplyToAddress = replyToAddress
             };
 
             IFlurlClientFactory factory = new PerBaseUrlFlurlClientFactory();
@@ -73,7 +75,8 @@ namespace Doppler.BigQueryMicroservice
                             new { email = bccEmail, type = "bcc" },
                         },
                         attachments = (object)null,
-                        model = new { demoData = demoData }
+                        model = new { demoData = demoData },
+                        reply_to = new { email = configuration.ReplyToAddress, name = configuration.FromName }
                     });
             }
         }

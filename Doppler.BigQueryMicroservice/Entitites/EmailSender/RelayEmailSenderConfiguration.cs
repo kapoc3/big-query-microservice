@@ -18,5 +18,6 @@ namespace Doppler.BigQueryMicroservice.Entitites.EmailSender
         public string Username { get; set; }
         public string FromName { get; set; }
         public string FromAddress { get; set; }
+        public string ReplyToAddress { get; set; }
     }
 }

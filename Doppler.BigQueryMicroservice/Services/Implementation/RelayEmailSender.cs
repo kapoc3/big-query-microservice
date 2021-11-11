@@ -76,7 +76,8 @@ namespace Doppler.BigQueryMicroservice.Services.Implementation
                         base64_content = Convert.ToBase64String(x.Content),
                         filename = x.Filename
                     }),
-                    model = templateModel
+                    model = templateModel,
+                    reply_to = new { email = _config.ReplyToAddress, name = _config.FromName }
                 }, cancellationToken);
         }
     }
